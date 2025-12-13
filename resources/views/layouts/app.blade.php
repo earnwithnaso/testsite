@@ -21,7 +21,7 @@
                  <div class="bg-white/80 backdrop-blur-md border border-white/20 shadow-floating rounded-full px-8 py-4 flex items-center justify-between gap-12 w-full max-w-6xl transition-all">
                     <!-- Brand -->
                     <a href="{{ route('dashboard') }}" class="flex items-center gap-2 text-xl font-black tracking-tighter">
-                         <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-8 w-auto">
+                         <img src="{{ asset('images/logo.jpeg') }}" alt="Logo" class="h-8 w-auto">
                         <span class="hidden sm:inline">NAZO DASHBOARD</span>
                     </a>
 
