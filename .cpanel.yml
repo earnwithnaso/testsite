@@ -1,0 +1,11 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/yourusername/laravel/earn-with-nazo
+    - /bin/cp -R * $DEPLOYPATH
+    - cd $DEPLOYPATH
+    - composer install --optimize-autoloader --no-dev
+    - php artisan migrate --force
+    - php artisan config:cache
+    - php artisan route:cache
+    - php artisan view:cache
