@@ -17,8 +17,8 @@
     <body class="font-sans text-primary antialiased bg-soft-grey">
         <div class="min-h-screen flex flex-col justify-center items-center pt-6 sm:pt-0">
             <div>
-                <a href="/" class="text-4xl font-bold tracking-tighter">
-                    EARN WITH NAZO
+                <a href="/">
+                    <img src="{{ asset('images/logo.jpeg') }}" alt="EARN WITH NAZO" class="h-20 w-auto" />
                 </a>
             </div>
 
