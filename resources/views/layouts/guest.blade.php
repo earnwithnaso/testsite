@@ -15,7 +15,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans text-primary antialiased bg-soft-grey">
-        <div class="min-h-screen flex flex-col justify-center items-center pt-6 sm:pt-0">
+        <div class="flex flex-col items-center pt-6 sm:pt-0 overflow-y-auto">
             <div>
                 <a href="/">
                     <img src="{{ asset('images/logo.jpeg') }}" alt="EARN WITH NAZO" class="h-20 w-auto" />
