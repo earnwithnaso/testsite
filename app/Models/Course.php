@@ -11,10 +11,11 @@ class Course extends Model
 
     protected $fillable = [
         'title', 'slug', 'description', 'short_description', 
-        'thumbnail_path', 'preview_video_url', 'price', 
+        'thumbnail_path', 'pdf_path', 'video_path', 'preview_video_url', 'price', 'stripe_price_id',
         'is_published', 'is_featured', 'difficulty_level', 
         'duration_hours', 'instructor_id',
-        'meta_title', 'meta_description', 'meta_keywords'
+        'meta_title', 'meta_description', 'meta_keywords',
+        'goals'
     ];
 
     protected $casts = [
@@ -36,5 +37,15 @@ class Course extends Model
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'category_course');
+    }
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public function lessonProgress()
+    {
+        return $this->hasManyThrough(LessonProgress::class, Lesson::class);
     }
 }

@@ -2,10 +2,16 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    @hasSection('meta')
+        @yield('meta')
+    @else
+        <meta name="description" content="Empowering your future through premium education.">
+    @endif
+
+    <title>@yield('title', config('app.name', 'Laravel'))</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -13,6 +19,9 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css">
 </head>
 <body class="font-sans text-primary antialiased bg-white selection:bg-black selection:text-white">
     
@@ -26,16 +35,31 @@
 
             <!-- Navigation Links -->
             <div class="hidden md:flex items-center gap-8">
-                <a href="{{ route('home') }}" class="text-sm font-bold text-secondary hover:text-brand transition-colors">Home</a>
-                <a href="{{ route('courses.index') }}" class="text-sm font-bold text-secondary hover:text-brand transition-colors">Courses</a>
-                <a href="{{ route('pages.show', 'about-us') }}" class="text-sm font-bold text-secondary hover:text-brand transition-colors">About Us</a>
-                <a href="{{ route('contact') }}" class="text-sm font-bold text-secondary hover:text-brand transition-colors">Contact</a>
+                <a href="{{ route('home') }}" class="flex items-center gap-2 text-sm font-bold text-secondary hover:text-brand transition-colors">
+                    <i class="hgi-stroke hgi-home-01 text-lg"></i>
+                    Home
+                </a>
+                <a href="{{ route('courses.index') }}" class="flex items-center gap-2 text-sm font-bold text-secondary hover:text-brand transition-colors">
+                    <i class="hgi-stroke hgi-book-02 text-lg"></i>
+                    Courses
+                </a>
+                <a href="{{ route('pages.show', 'about-us') }}" class="flex items-center gap-2 text-sm font-bold text-secondary hover:text-brand transition-colors">
+                    <i class="hgi-stroke hgi-information-circle text-lg"></i>
+                    About Us
+                </a>
+                <a href="{{ route('contact') }}" class="flex items-center gap-2 text-sm font-bold text-secondary hover:text-brand transition-colors">
+                    <i class="hgi-stroke hgi-mail-01 text-lg"></i>
+                    Contact
+                </a>
             </div>
 
             <!-- Auth Buttons -->
             <div class="flex items-center gap-4">
                 @auth
-                    <a href="{{ route('dashboard') }}" class="text-sm font-bold text-primary hover:text-brand">Dashboard</a>
+                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2 text-sm font-bold text-primary hover:text-brand">
+                        <i class="hgi-stroke hgi-layout-grid-01 text-lg"></i>
+                        Dashboard
+                    </a>
                 @else
                     <a href="{{ route('login') }}" class="text-sm font-bold text-primary hover:text-brand">Log in</a>
                     <a href="{{ route('register') }}" class="px-6 py-2.5 bg-brand text-white text-sm font-bold rounded-full hover:bg-green-600 transition-all shadow-medium hover:shadow-floating">
@@ -60,25 +84,28 @@
             </div>
             <div>
                 <h4 class="font-bold mb-4">Platform</h4>
-                <ul class="space-y-2 text-sm text-white/60">
-                    <li><a href="#" class="hover:text-white">Courses</a></li>
-                    <li><a href="#" class="hover:text-white">Pricing</a></li>
-                    <li><a href="#" class="hover:text-white">Mentors</a></li>
+                <ul class="space-y-3 text-sm text-white/60">
+                    <li><a href="#" class="flex items-center gap-2 hover:text-white"><i class="hgi-stroke hgi-book-02 text-brand"></i> Courses</a></li>
+                    <li><a href="#" class="flex items-center gap-2 hover:text-white"><i class="hgi-stroke hgi-tag-01 text-brand"></i> Pricing</a></li>
+                    <li><a href="#" class="flex items-center gap-2 hover:text-white"><i class="hgi-stroke hgi-user-group text-brand"></i> Mentors</a></li>
                 </ul>
             </div>
             <div>
                 <h4 class="font-bold mb-4">Company</h4>
-                <ul class="space-y-2 text-sm text-white/60">
-                    <li><a href="#" class="hover:text-white">About Us</a></li>
-                    <li><a href="#" class="hover:text-white">Contact</a></li>
-                    <li><a href="#" class="hover:text-white">Terms</a></li>
+                <ul class="space-y-3 text-sm text-white/60">
+                    <li><a href="#" class="flex items-center gap-2 hover:text-white"><i class="hgi-stroke hgi-information-circle text-brand"></i> About Us</a></li>
+                    <li><a href="#" class="flex items-center gap-2 hover:text-white"><i class="hgi-stroke hgi-mail-01 text-brand"></i> Contact</a></li>
+                    <li><a href="#" class="flex items-center gap-2 hover:text-white"><i class="hgi-stroke hgi-shield-check text-brand"></i> Terms</a></li>
                 </ul>
             </div>
             <div>
                 <h4 class="font-bold mb-4">Newsletter</h4>
                 <form class="flex gap-2">
-                    <input type="email" placeholder="Email address" class="bg-white/10 border-none rounded-full px-4 py-2 text-sm w-full focus:ring-1 focus:ring-white">
-                    <button class="bg-white text-primary px-4 py-2 rounded-full font-bold text-sm">Go</button>
+                    <div class="relative flex-grow">
+                        <i class="hgi-stroke hgi-mail-at-sign absolute left-3 top-1/2 -translate-y-1/2 text-white/40"></i>
+                        <input type="email" placeholder="Email address" class="bg-white/10 border-none rounded-full pl-10 pr-4 py-2 text-sm w-full focus:ring-1 focus:ring-white">
+                    </div>
+                    <button class="bg-white text-primary px-4 py-2 rounded-full font-bold text-sm hover:bg-brand hover:text-white transition-colors">Go</button>
                 </form>
             </div>
         </div>

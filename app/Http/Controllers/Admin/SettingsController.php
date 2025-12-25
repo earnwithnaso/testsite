@@ -34,6 +34,9 @@ class SettingsController extends Controller
             'social_youtube' => 'nullable|url',
             'currency_code' => 'nullable|string|size:3',
             'currency_symbol' => 'nullable|string|max:5',
+            'bank_name' => 'nullable|string|max:255',
+            'account_number' => 'nullable|string|max:50',
+            'account_name' => 'nullable|string|max:255',
         ]);
 
         foreach ($validated as $key => $value) {

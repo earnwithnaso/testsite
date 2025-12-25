@@ -5,7 +5,7 @@
         <div class="bg-white rounded-5xl shadow-medium p-10">
             <h3 class="text-xl font-bold mb-8 text-primary">Update Lesson</h3>
 
-            <form action="{{ route('admin.lessons.update', $lesson) }}" method="POST" class="space-y-6">
+            <form action="{{ route('admin.lessons.update', $lesson) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
                 @method('PUT')
 
@@ -18,9 +18,29 @@
 
                 <!-- Video URL -->
                 <div>
-                     <label class="block text-sm font-bold text-secondary mb-2 ml-4">Video URL (Vimeo/YouTube/S3)</label>
+                     <label class="block text-sm font-bold text-secondary mb-2 ml-4">Video URL (optional if uploading video)</label>
                     <input type="url" name="video_url" value="{{ old('video_url', $lesson->video_url) }}" class="w-full h-14 px-6 rounded-full border-2 border-border-grey focus:border-primary focus:ring-0 transition-colors bg-white text-primary">
                     @error('video_url') <p class="text-red-500 text-xs mt-2 ml-4">{{ $message }}</p> @enderror
+                </div>
+
+                <!-- Local Video Upload -->
+                <div>
+                    <label class="block text-sm font-bold text-secondary mb-2 ml-4">Upload Video Asset (Optional)</label>
+                    <input type="file" name="video_file" class="w-full h-14 px-6 py-3 rounded-full border-2 border-border-grey focus:border-primary focus:ring-0 transition-colors bg-white text-primary" accept="video/*">
+                    @if($lesson->video_path)
+                        <p class="text-xs text-green-500 mt-1 ml-4">Current: {{ basename($lesson->video_path) }}</p>
+                    @endif
+                    @error('video_file') <p class="text-red-500 text-xs mt-2 ml-4">{{ $message }}</p> @enderror
+                </div>
+
+                <!-- PDF Upload -->
+                <div>
+                    <label class="block text-sm font-bold text-secondary mb-2 ml-4">PDF Document Asset (Optional)</label>
+                    <input type="file" name="pdf_file" class="w-full h-14 px-6 py-3 rounded-full border-2 border-border-grey focus:border-primary focus:ring-0 transition-colors bg-white text-primary" accept=".pdf">
+                    @if($lesson->pdf_path)
+                        <p class="text-xs text-green-500 mt-1 ml-4">Current: {{ basename($lesson->pdf_path) }}</p>
+                    @endif
+                    @error('pdf_file') <p class="text-red-500 text-xs mt-2 ml-4">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="grid grid-cols-2 gap-6">

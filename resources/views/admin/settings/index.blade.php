@@ -41,6 +41,24 @@
                     </div>
                 </div>
 
+                <div class="mt-8 space-y-6">
+                    <h4 class="text-lg font-bold text-primary">Bank Account Details (for Bank Transfer)</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-sm font-bold text-secondary mb-2 ml-4">Bank Name</label>
+                            <input type="text" name="bank_name" value="{{ old('bank_name', $settings['bank_name'] ?? '') }}" class="w-full h-12 px-6 rounded-full border-2 border-border-grey focus:border-primary focus:ring-0 transition-colors bg-white text-primary" placeholder="e.g., Access Bank">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-secondary mb-2 ml-4">Account Number</label>
+                            <input type="text" name="account_number" value="{{ old('account_number', $settings['account_number'] ?? '') }}" class="w-full h-12 px-6 rounded-full border-2 border-border-grey focus:border-primary focus:ring-0 transition-colors bg-white text-primary" placeholder="0123456789">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-secondary mb-2 ml-4">Account Name</label>
+                            <input type="text" name="account_name" value="{{ old('account_name', $settings['account_name'] ?? '') }}" class="w-full h-12 px-6 rounded-full border-2 border-border-grey focus:border-primary focus:ring-0 transition-colors bg-white text-primary" placeholder="Nazo E-Learning">
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Address -->
                  <div>
                     <label class="block text-sm font-bold text-secondary mb-2 ml-4">Office Address</label>

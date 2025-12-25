@@ -6,9 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Laravel\Cashier\Cashier;
+use Illuminate\Support\Str;
 
 class CheckoutController extends Controller
 {
@@ -19,75 +20,75 @@ class CheckoutController extends Controller
     {
         $user = $request->user();
 
-        // Check if already purchased
-        if ($user->orders()->whereHas('items', function ($q) use ($course) {
+        // Check if already purchased OR has a pending order
+        $existingOrder = $user->orders()->whereHas('items', function ($q) use ($course) {
             $q->where('course_id', $course->id);
-        })->exists()) {
-            return redirect()->route('courses.show', $course->slug)
-                ->with('info', 'You have already purchased this course.');
+        })->first();
+
+        if ($existingOrder) {
+            if ($existingOrder->payment_status === 'paid') {
+                return redirect()->route('student.courses.show', $course->slug)
+                    ->with('info', 'You already have access to this course.');
+            } else {
+                return redirect()->route('dashboard')
+                    ->with('info', 'You have a pending enrollment for this course. Please wait for admin approval.');
+            }
         }
 
-        // Create Stripe Checkout Session
-        // Note: In a real app, ensure STRIPE_KEY/SECRET are set in .env
-        // We use $user->checkout() provided by Cashier
-        
-        // For individual products (One-time payment)
-        // We need to pass 'price_data' manually or use a price ID if established in Stripe.
-        // Or simpler: create a ephemeral session.
-        
-        try {
-            $checkout = $user->checkoutCharge($course->price * 100, $course->title, 1, [
-                'success_url' => route('checkout.success', ['course_id' => $course->id]) . '&session_id={CHECKOUT_SESSION_ID}',
-                'cancel_url' => route('courses.show', $course->slug),
-                'metadata' => [
-                    'course_id' => $course->id,
-                    'user_id' => $user->id,
-                ],
-            ]);
+        $bankDetails = SiteSetting::whereIn('key', ['bank_name', 'account_number', 'account_name'])
+            ->pluck('value', 'key');
+            
+        $currencySymbol = SiteSetting::where('key', 'currency_symbol')->value('value') ?? '₦';
 
-            return $checkout;
-        } catch (\Exception $e) {
-            // Fallback for demo/dev if Stripe not configured
-            \Log::error('Stripe Checkout Error: ' . $e->getMessage());
-            return redirect()->route('courses.show', $course->slug)
-                ->with('error', 'Payment gateway configuration missing. Please contact admin.');
-        }
+        return view('student.checkout.index', compact('course', 'bankDetails', 'currencySymbol'));
     }
 
     /**
-     * Handle successful payment return.
+     * Initialize Stripe Checkout session.
      */
-    public function success(Request $request)
+    public function stripeSession(Request $request, Course $course)
     {
-        $courseId = $request->get('course_id');
-        $sessionId = $request->get('session_id');
+        // Using Laravel Cashier (Stripe)
+        return $request->user()
+            ->checkout([$course->stripe_price_id => 1], [
+                'success_url' => route('checkout.success') . '?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url' => route('courses.show', $course->slug),
+            ]);
+    }
+
+    /**
+     * Initialize Paystack Payment (Manual implementation or using a package)
+     */
+    public function paystackInitialize(Request $request, Course $course)
+    {
+        // This is a placeholder for Paystack redirection logic
+        // In a real app, you'd call Paystack API here
+        return redirect()->away('https://checkout.paystack.com/placeholder');
+    }
+
+    /**
+     * Process Bank Transfer submission.
+     */
+    public function processBankTransfer(Request $request, Course $course)
+    {
+        $request->validate([
+            'payment_proof' => 'required|image|max:5120', // Max 5MB
+        ]);
+
         $user = $request->user();
-        
-        if (!$courseId || !$sessionId) {
-            return redirect()->route('dashboard');
-        }
 
-        $course = Course::findOrFail($courseId);
-
-        // In a real app, verifying the Stripe session status here is crucial.
-        // For this prototype, we assume success if redirected here via the signed/secure flow or just simpler logic.
-        
-        // Check duplication again
-        $exists = Order::where('user_id', $user->id)
-            ->where('transaction_id', $sessionId)
-            ->exists();
-
-        if ($exists) {
-             return redirect()->route('dashboard')->with('success', 'Course already added to your library.');
-        }
+        // Save proof
+        $path = $request->file('payment_proof')->store('payment_proofs', 'public');
 
         // Create Order
         $order = Order::create([
             'user_id' => $user->id,
-            'status' => 'completed',
+            'order_number' => 'ORD-' . strtoupper(Str::random(10)),
+            'status' => 'pending',
+            'payment_status' => 'pending',
             'total_amount' => $course->price,
-            'payment_method' => 'stripe',
-            'transaction_id' => $sessionId,
+            'payment_method' => 'bank_transfer',
+            'payment_proof' => $path,
         ]);
 
         OrderItem::create([
@@ -96,6 +97,17 @@ class CheckoutController extends Controller
             'price' => $course->price,
         ]);
 
-        return redirect()->route('dashboard')->with('success', 'Enrollment successful! Start learning now.');
+        return redirect()->route('dashboard')->with('success', 'Payment proof submitted successfully! Your course will be available once the admin approves your payment.');
+    }
+
+    /**
+     * Handle successful payment return.
+     */
+    public function success(Request $request)
+    {
+        // NOTE: In production, use Stripe Webhooks to fulfill the order.
+        // This is where you would mark the order as 'paid' and enroll the user.
+        
+        return redirect()->route('dashboard')->with('success', 'Your enrollment was successful! Welcome to the course.');
     }
 }

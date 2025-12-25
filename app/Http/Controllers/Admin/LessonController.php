@@ -42,6 +42,16 @@ class LessonController extends Controller
             'is_published' => 'sometimes|boolean',
         ]);
 
+        if ($request->hasFile('video_file')) {
+            $path = $request->file('video_file')->store('lessons/videos', 'public');
+            $validated['video_path'] = $path;
+        }
+
+        if ($request->hasFile('pdf_file')) {
+            $path = $request->file('pdf_file')->store('lessons/pdfs', 'public');
+            $validated['pdf_path'] = $path;
+        }
+
         $validated['slug'] = Str::slug($validated['title']) . '-' . uniqid();
         $validated['course_id'] = $course->id;
         $validated['position'] = $validated['position'] ?? ($course->lessons()->max('position') + 1);
@@ -86,6 +96,16 @@ class LessonController extends Controller
             'is_free' => 'sometimes|boolean',
             'is_published' => 'sometimes|boolean',
         ]);
+
+        if ($request->hasFile('video_file')) {
+            $path = $request->file('video_file')->store('lessons/videos', 'public');
+            $validated['video_path'] = $path;
+        }
+
+        if ($request->hasFile('pdf_file')) {
+            $path = $request->file('pdf_file')->store('lessons/pdfs', 'public');
+            $validated['pdf_path'] = $path;
+        }
 
         if ($request->has('title') && $lesson->title !== $request->title) {
             $validated['slug'] = Str::slug($validated['title']) . '-' . uniqid();

@@ -1,59 +1,99 @@
 <x-web-layout>
-    <div class="px-8 max-w-7xl mx-auto">
-        <!-- Header -->
-        <div class="text-center mb-16">
-            <h1 class="text-5xl font-black text-primary mb-4 tracking-tighter">Explore Courses</h1>
-            <p class="text-xl text-secondary max-w-2xl mx-auto">Find the perfect course to upgrade your skills. Choose from our curated collection of premium content.</p>
+    <div class="px-8 max-w-7xl mx-auto py-20">
+        <!-- Header Section -->
+        <div class="relative mb-20">
+            <div class="absolute -top-10 -left-10 w-40 h-40 bg-brand/5 rounded-full blur-3xl"></div>
+            <div class="text-center relative z-10">
+                <div class="inline-block bg-brand/10 px-4 py-1 rounded-full text-brand text-xs font-black tracking-widest uppercase mb-4">Limitless Learning</div>
+                <h1 class="text-6xl font-black text-primary mb-6 tracking-tighter">Explore Our Courses</h1>
+                <p class="text-xl text-secondary/70 max-w-2xl mx-auto font-medium">Empower yourself with industry-leading knowledge. From beginner to pro, we have a path for you.</p>
+            </div>
         </div>
 
-        <!-- Filter Placeholder (Tabs) -->
-        <div class="flex justify-center gap-4 mb-16 overflow-x-auto pb-4">
-            <button class="px-6 py-3 bg-primary text-white rounded-full font-bold shadow-medium hover:shadow-floating transition-all whitespace-nowrap">All Courses</button>
-            <button class="px-6 py-3 bg-white text-secondary rounded-full font-bold shadow-soft hover:shadow-medium border border-soft-grey whitespace-nowrap hover:text-primary transition-all">Development</button>
-            <button class="px-6 py-3 bg-white text-secondary rounded-full font-bold shadow-soft hover:shadow-medium border border-soft-grey whitespace-nowrap hover:text-primary transition-all">Design</button>
-            <button class="px-6 py-3 bg-white text-secondary rounded-full font-bold shadow-soft hover:shadow-medium border border-soft-grey whitespace-nowrap hover:text-primary transition-all">Business</button>
-            <button class="px-6 py-3 bg-white text-secondary rounded-full font-bold shadow-soft hover:shadow-medium border border-soft-grey whitespace-nowrap hover:text-primary transition-all">Marketing</button>
+        <!-- Premium Filter Pills -->
+        <div class="flex flex-wrap justify-center gap-4 mb-20">
+            <button class="px-10 py-4 bg-primary text-white rounded-full font-black shadow-medium hover:shadow-floating transition-all whitespace-nowrap text-sm">
+                All Courses
+            </button>
+            @php
+                $tags = ['Development', 'Design', 'Business', 'Marketing', 'Crypto'];
+            @endphp
+            @foreach($tags as $tag)
+                <button class="px-8 py-4 bg-white text-secondary font-black rounded-full shadow-soft hover:shadow-medium border border-soft-grey whitespace-nowrap hover:text-primary transition-all text-sm">
+                    {{ $tag }}
+                </button>
+            @endforeach
         </div>
 
-        <!-- Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Course Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             @forelse($courses as $course)
-                <a href="{{ route('courses.show', $course->slug) }}" class="bg-white rounded-4xl shadow-medium hover:shadow-floating transition-all duration-300 group cursor-pointer border border-transparent hover:border-soft-grey block">
-                    <div class="h-64 bg-soft-grey rounded-t-4xl m-2 relative overflow-hidden">
-                        @if($course->thumbnail_path)
-                            <img src="{{ Storage::url($course->thumbnail_path) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        @else
-                            <div class="absolute inset-0 flex items-center justify-center text-primary/20 font-bold">THUMBNAIL</div>
-                        @endif
-                        <div class="absolute top-4 left-4 bg-white px-3 py-1 rounded-full text-xs font-bold shadow-sm capitalize">{{ $course->difficulty_level }}</div>
-                    </div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-4">
-                            <h3 class="text-xl font-bold text-primary group-hover:text-black leading-tight line-clamp-2">{{ $course->title }}</h3>
+                <div class="bg-white rounded-[40px] shadow-medium flex flex-col hover:shadow-floating transition-all duration-500 border border-transparent hover:border-soft-grey overflow-hidden group h-full">
+                    <!-- Thumbnail Area -->
+                    <div class="h-56 bg-soft-grey relative overflow-hidden">
+                        <img src="{{ $course->thumbnail_path && Str::startsWith($course->thumbnail_path, 'http') ? $course->thumbnail_path : ($course->thumbnail_path ? Storage::url($course->thumbnail_path) : asset('images/course_web.png')) }}" 
+                             alt="{{ $course->title }}" 
+                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+
+                        <!-- Badges -->
+                        <div class="absolute top-4 left-4 flex gap-2">
+                             <span class="bg-white/95 backdrop-blur px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest text-primary shadow-soft">
+                                {{ strtoupper($course->difficulty_level) }}
+                            </span>
                         </div>
-                        <div class="flex justify-between items-center mb-4">
-                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 bg-gray-200 rounded-full"></div>
-                                <span class="text-xs font-bold text-primary">{{ $course->instructor->name ?? 'Instructor' }}</span>
+
+                        <!-- Price on Image -->
+                        <div class="absolute bottom-4 right-4 shadow-medium">
+                            <div class="bg-white rounded-2xl p-3 flex items-center gap-2">
+                                <span class="text-primary font-black text-xl">₦{{ number_format((float)($course->price ?? 0), 0) }}</span>
                             </div>
-                            <span class="text-lg font-black text-primary">₦{{ number_format($course->price, 2) }}</span>
-                        </div>
-                        <div class="w-full h-px bg-soft-grey/50 my-4"></div>
-                        <div class="flex justify-between items-center text-xs font-bold text-secondary">
-                            <span>{{ $course->lessons_count ?? 0 }} Lessons</span>
-                            <span class="text-primary group-hover:underline">View Details -></span>
                         </div>
                     </div>
-                </a>
+
+                    <!-- Content Area -->
+                    <div class="p-8 flex-1 flex flex-col">
+                        <h3 class="text-xl font-black text-primary mb-2 line-clamp-2 leading-tight group-hover:text-brand transition-colors">
+                            {{ $course->title }}
+                        </h3>
+                        
+                        <p class="text-secondary/60 text-xs font-black uppercase tracking-widest mb-6 flex items-center gap-1">
+                            By {{ $course->instructor->name }}
+                        </p>
+
+                        <div class="mt-auto space-y-6">
+                            <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-secondary/50">
+                                <span class="flex items-center gap-1">
+                                    <i class="hgi-stroke hgi-book-open-01 text-brand"></i>
+                                    {{ $course->lessons_count ?? 0 }} Lessons
+                                </span>
+                                <span class="flex items-center gap-1">
+                                    <i class="hgi-stroke hgi-user-group text-brand"></i>
+                                    {{ $course->students_count ?? rand(50, 200) }} Students
+                                </span>
+                            </div>
+
+                            <a href="{{ route('courses.show', $course->slug) }}" class="flex items-center justify-center gap-2 w-full py-4 bg-primary text-white font-bold rounded-full shadow-medium hover:bg-brand transition-all group/btn">
+                                <span>Learn More</span>
+                                <i class="hgi-stroke hgi-arrow-right-01 group-hover/btn:translate-x-1 transition-transform"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             @empty
-                <div class="col-span-full text-center py-20">
-                    <h3 class="text-2xl font-bold text-primary mb-2">No courses found</h3>
-                    <p class="text-secondary">Check back later for new content.</p>
+                <div class="col-span-full py-32 text-center bg-white rounded-[40px] shadow-soft border border-soft-grey border-dashed">
+                    <div class="w-20 h-20 bg-soft-grey/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="hgi-stroke hgi-search-01 text-4xl text-secondary"></i>
+                    </div>
+                    <h3 class="text-2xl font-black text-primary mb-2">No courses found</h3>
+                    <p class="text-secondary font-medium">We're constantly adding new content. Check back soon!</p>
                 </div>
             @endforelse
         </div>
 
-        <div class="mt-16">
+        <!-- Pagination -->
+        <div class="mt-20 flex justify-center">
             {{ $courses->links() }}
         </div>
     </div>

@@ -25,7 +25,6 @@ class User extends Authenticatable
         'phone',
         'role',
         'status',
-        'wallet_balance',
     ];
 
     /**
@@ -48,13 +47,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'wallet_balance' => 'decimal:2',
         ];
-    }
-
-    public function walletTransactions()
-    {
-        return $this->hasMany(WalletTransaction::class);
     }
 
     public function orders()
@@ -67,8 +60,38 @@ class User extends Authenticatable
         return $this->hasMany(ActivityLog::class);
     }
 
+    public function lessonProgress()
+    {
+        return $this->hasMany(LessonProgress::class);
+    }
+
+    public function enrolledCourses()
+    {
+        return Course::whereHas('orderItems.order', function ($query) {
+            $query->where('user_id', $this->id)->where('payment_status', 'paid');
+        });
+    }
+
+    public function isEnrolledIn(Course $course): bool
+    {
+        return $this->orders()->where('payment_status', 'paid')
+            ->whereHas('items', function($query) use ($course) {
+                $query->where('course_id', $course->id);
+            })->exists();
+    }
+
+    public function isInstructor(): bool
+    {
+        return $this->role === 'instructor';
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    public function isStaff(): bool
+    {
+        return $this->isAdmin() || $this->isInstructor();
     }
 }

@@ -2,7 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
@@ -25,18 +25,8 @@
                         <span class="hidden sm:inline">NAZO DASHBOARD</span>
                     </a>
 
-                    <!-- Nav Links -->
+                    <!-- Nav Links Removed -->
                     <div class="hidden md:flex items-center gap-2">
-                        <a href="{{ route('dashboard') }}" class="px-5 py-2 rounded-full text-sm font-bold transition-all {{ request()->routeIs('dashboard') ? 'bg-brand text-white shadow-soft' : 'text-secondary hover:text-brand hover:bg-soft-grey/50' }}">
-                            Dashboard
-                        </a>
-                        <a href="{{ route('courses.index') }}" class="px-5 py-2 rounded-full text-sm font-bold transition-all {{ request()->routeIs('courses.*') ? 'bg-brand text-white shadow-soft' : 'text-secondary hover:text-brand hover:bg-soft-grey/50' }}">
-                            My Courses
-                        </a>
-                        <!-- Wallet -->
-                        <a href="#" class="px-5 py-2 rounded-full text-sm font-bold text-secondary hover:text-primary hover:bg-soft-grey/50 transition-all">
-                            Wallet (₦0.00)
-                        </a>
                     </div>
 
                     <!-- User Menu -->

@@ -18,16 +18,21 @@ Route::get('/contact', function () {
 
 // Authenticated Routes
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\Student\CourseController::class, 'dashboard'])->name('dashboard');
 
     Route::get('/checkout/{course}', [\App\Http\Controllers\Student\CheckoutController::class, 'checkout'])->name('checkout.start');
+    Route::post('/checkout/{course}/stripe', [\App\Http\Controllers\Student\CheckoutController::class, 'stripeSession'])->name('checkout.stripe');
+    Route::post('/checkout/{course}/bank-transfer', [\App\Http\Controllers\Student\CheckoutController::class, 'processBankTransfer'])->name('checkout.bank_transfer.process');
     Route::get('/checkout/success', [\App\Http\Controllers\Student\CheckoutController::class, 'success'])->name('checkout.success');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Student Dashboard & Courses
+    Route::get('/my-courses', [\App\Http\Controllers\Student\CourseController::class, 'index'])->name('student.courses.index');
+    Route::get('/my-courses/{course:slug}/{lesson?}', [\App\Http\Controllers\Student\CourseController::class, 'show'])->name('student.courses.show');
+    Route::post('/lessons/{lesson}/complete', [\App\Http\Controllers\Student\CourseController::class, 'completeLesson'])->name('student.lessons.complete');
 });
 
 
