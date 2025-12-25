@@ -25,8 +25,15 @@
                         <span class="hidden sm:inline">NAZO DASHBOARD</span>
                     </a>
 
-                    <!-- Nav Links Removed -->
+                    <!-- Nav Links -->
                     <div class="hidden md:flex items-center gap-2">
+                        <a href="{{ route('student.courses.index') }}" class="px-6 py-2 rounded-full font-bold text-sm text-secondary hover:bg-soft-grey/50 hover:text-primary transition-all">
+                            My Courses
+                        </a>
+                        <a href="{{ route('student.certificates.index') }}" class="px-6 py-2 rounded-full font-bold text-sm text-secondary hover:bg-soft-grey/50 hover:text-primary transition-all flex items-center gap-2">
+                            <i class="hgi-stroke hgi-award-01"></i>
+                            Certificates
+                        </a>
                     </div>
 
                     <!-- User Menu -->

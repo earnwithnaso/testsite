@@ -41,6 +41,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/courses/{course}/certificate/generate', [\App\Http\Controllers\Student\CertificateController::class, 'generate'])->name('student.certificates.generate');
     Route::get('/certificates/{certificate}', [\App\Http\Controllers\Student\CertificateController::class, 'show'])->name('student.certificates.show');
 
+    // Reviews
+    Route::post('/courses/{course}/review', [\App\Http\Controllers\Student\ReviewController::class, 'store'])->name('student.reviews.store');
+
 });
 
 

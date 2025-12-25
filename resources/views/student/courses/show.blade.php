@@ -116,6 +116,41 @@
                     </div>
                 </div>
 
+                <!-- Certificate Button (if eligible) -->
+                @php
+                    $requiredQuizzes = $course->quizzes()->where('is_published', true)->get();
+                    $passedQuizzes = 0;
+                    foreach ($requiredQuizzes as $quiz) {
+                        $result = $quiz->results()->where('user_id', Auth::id())->where('is_passed', true)->first();
+                        if ($result) $passedQuizzes++;
+                    }
+                    $isCourseComplete = ($percentage >= 100) && ($requiredQuizzes->count() == 0 || $passedQuizzes >= $requiredQuizzes->count());
+                    $hasCertificate = \App\Models\Certificate::where('user_id', Auth::id())->where('course_id', $course->id)->exists();
+                @endphp
+
+                @if($isCourseComplete)
+                <div class="bg-gradient-to-br from-brand/10 to-primary/10 rounded-[40px] shadow-medium overflow-hidden border-2 border-brand/20 p-8 text-center">
+                    <i class="hgi-stroke hgi-award-01 text-5xl text-brand mb-4"></i>
+                    <h3 class="font-black text-xl text-primary mb-2">Course Completed!</h3>
+                    <p class="text-sm text-secondary/60 font-medium mb-6">You've mastered all lessons and assessments</p>
+                    
+                    @if($hasCertificate)
+                        <a href="{{ route('student.certificates.show', \App\Models\Certificate::where('user_id', Auth::id())->where('course_id', $course->id)->first()) }}" class="block w-full py-4 bg-brand text-white font-black rounded-full text-center shadow-glow hover:scale-[1.02] transition-all flex items-center justify-center gap-3">
+                            <i class="hgi-stroke hgi-award-01"></i>
+                            VIEW CERTIFICATE
+                        </a>
+                    @else
+                        <form action="{{ route('student.certificates.generate', $course) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="w-full py-4 bg-brand text-white font-black rounded-full shadow-glow hover:scale-[1.02] transition-all flex items-center justify-center gap-3">
+                                <i class="hgi-stroke hgi-award-01"></i>
+                                GET CERTIFICATE
+                            </button>
+                        </form>
+                    @endif
+                </div>
+                @endif
+
                 <!-- Course Assets -->
                 @if($course->pdf_path || $course->video_path)
                 <div class="bg-white rounded-[40px] shadow-medium overflow-hidden border border-soft-grey p-8 space-y-6">
@@ -235,6 +270,56 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Review Button (Floating) -->
+    @php
+        $hasReviewed = \App\Models\Review::where('user_id', Auth::id())->where('course_id', $course->id)->exists();
+    @endphp
+    @if(!$hasReviewed)
+    <button onclick="document.getElementById('reviewModal').classList.remove('hidden')" class="fixed bottom-8 right-8 w-16 h-16 bg-brand text-white rounded-full shadow-glow hover:scale-110 transition-all flex items-center justify-center z-40">
+        <i class="hgi-stroke hgi-star text-2xl"></i>
+    </button>
+    @endif
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onclick="if(event.target === this) this.classList.add('hidden')">
+        <div class="bg-white rounded-[40px] shadow-2xl max-w-2xl w-full p-10" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-black text-primary tracking-tighter">Rate This Course</h2>
+                <button onclick="document.getElementById('reviewModal').classList.add('hidden')" class="w-10 h-10 rounded-full bg-soft-grey hover:bg-red-100 hover:text-red-500 transition-all flex items-center justify-center">
+                    <i class="hgi-stroke hgi-cancel-01"></i>
+                </button>
+            </div>
+
+            <form action="{{ route('student.reviews.store', $course) }}" method="POST" class="space-y-8" x-data="{ rating: 0 }">
+                @csrf
+                
+                <!-- Star Rating -->
+                <div class="text-center">
+                    <p class="text-sm font-black uppercase text-secondary/60 tracking-widest mb-4">Your Rating</p>
+                    <div class="flex items-center justify-center gap-2">
+                        @for($i = 1; $i <= 5; $i++)
+                        <button type="button" @click="rating = {{ $i }}" class="transition-transform hover:scale-125">
+                            <i :class="rating >= {{ $i }} ? 'hgi-star text-brand' : 'hgi-star text-soft-grey'" class="hgi-stroke text-5xl"></i>
+                        </button>
+                        @endfor
+                    </div>
+                    <input type="hidden" name="rating" :value="rating" required>
+                </div>
+
+                <!-- Comment -->
+                <div>
+                    <label class="block text-sm font-black text-primary uppercase tracking-widest mb-3">Your Review (Optional)</label>
+                    <textarea name="comment" rows="4" placeholder="Share your experience with this course..." class="w-full px-6 py-4 rounded-2xl bg-soft-grey/30 border-2 border-transparent focus:border-primary focus:bg-white outline-none transition-all font-medium text-primary resize-none"></textarea>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="w-full py-5 bg-primary text-white font-black rounded-full shadow-glow hover:bg-secondary hover:scale-[1.02] transition-all">
+                    SUBMIT REVIEW
+                </button>
+            </form>
         </div>
     </div>
 </x-app-layout>

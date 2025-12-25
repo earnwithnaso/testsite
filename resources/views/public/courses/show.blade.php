@@ -174,5 +174,63 @@
                 </div>
             </div>
         </div>
+
+        <!-- Reviews Section -->
+        <div class="max-w-6xl mx-auto px-6 pb-20">
+            <div class="bg-white rounded-[40px] shadow-soft p-12 border border-soft-grey">
+                <div class="flex items-center justify-between mb-10">
+                    <div>
+                        <h2 class="text-3xl font-black text-primary tracking-tighter mb-2">Student Reviews</h2>
+                        @php
+                            $avgRating = $course->reviews()->where('is_approved', true)->avg('rating');
+                            $reviewCount = $course->reviews()->where('is_approved', true)->count();
+                        @endphp
+                        @if($reviewCount > 0)
+                        <div class="flex items-center gap-3">
+                            <div class="flex items-center gap-1">
+                                @for($i = 1; $i <= 5; $i++)
+                                    <i class="hgi-stroke {{ $i <= round($avgRating) ? 'hgi-star text-brand' : 'hgi-star text-soft-grey' }} text-xl"></i>
+                                @endfor
+                            </div>
+                            <span class="text-lg font-black text-primary">{{ number_format($avgRating, 1) }}</span>
+                            <span class="text-sm text-secondary/60 font-medium">({{ $reviewCount }} {{ $reviewCount == 1 ? 'review' : 'reviews' }})</span>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Reviews List -->
+                <div class="space-y-6 mb-10">
+                    @forelse($course->reviews()->where('is_approved', true)->with('user')->latest()->take(10)->get() as $review)
+                    <div class="p-6 bg-soft-grey/30 rounded-3xl">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-black">
+                                    {{ substr($review->user->name, 0, 1) }}
+                                </div>
+                                <div>
+                                    <h4 class="font-black text-primary">{{ $review->user->name }}</h4>
+                                    <div class="flex items-center gap-1">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <i class="hgi-stroke {{ $i <= $review->rating ? 'hgi-star text-brand' : 'hgi-star text-soft-grey' }} text-sm"></i>
+                                        @endfor
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="text-xs text-secondary/60 font-medium">{{ $review->created_at->diffForHumans() }}</span>
+                        </div>
+                        @if($review->comment)
+                        <p class="text-secondary/80 font-medium leading-relaxed">{{ $review->comment }}</p>
+                        @endif
+                    </div>
+                    @empty
+                    <div class="text-center py-12">
+                        <i class="hgi-stroke hgi-message-02 text-5xl text-secondary/20 mb-4"></i>
+                        <p class="text-secondary/60 font-medium">No reviews yet. Be the first to review this course!</p>
+                    </div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
     </div>
 </x-web-layout>
