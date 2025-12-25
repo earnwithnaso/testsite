@@ -31,6 +31,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/my-courses', [\App\Http\Controllers\Student\CourseController::class, 'index'])->name('student.courses.index');
     Route::get('/my-courses/{course:slug}/{lesson?}', [\App\Http\Controllers\Student\CourseController::class, 'show'])->name('student.courses.show');
     Route::post('/lessons/{lesson}/complete', [\App\Http\Controllers\Student\CourseController::class, 'completeLesson'])->name('student.lessons.complete');
+
+    // Quizzes
+    Route::get('/quizzes/{quiz}', [\App\Http\Controllers\Student\QuizController::class, 'show'])->name('student.quizzes.show');
+    Route::post('/quizzes/{quiz}/submit', [\App\Http\Controllers\Student\QuizController::class, 'submit'])->name('student.quizzes.submit');
+
 });
 
 

@@ -48,4 +48,9 @@ class Course extends Model
     {
         return $this->hasManyThrough(LessonProgress::class, Lesson::class);
     }
+
+    public function quizzes()
+    {
+        return $this->hasMany(Quiz::class);
+    }
 }

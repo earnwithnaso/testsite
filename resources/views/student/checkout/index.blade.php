@@ -71,7 +71,7 @@
                                             <p class="text-[10px] font-black uppercase text-secondary/40 tracking-widest">Account Number</p>
                                             <div class="flex items-center justify-between">
                                                 <p class="text-4xl font-black text-primary tracking-tighter">{{ $bankDetails['account_number'] ?? 'Not Provided' }}</p>
-                                                <button onclick="navigator.clipboard.writeText('{{ $bankDetails['account_number'] ?? '' }}')" class="p-4 bg-white rounded-2xl shadow-soft hover:bg-primary hover:text-white transition-all group/copy">
+                                                <button type="button" class="copy-account-btn p-4 bg-white rounded-2xl shadow-soft hover:bg-primary hover:text-white transition-all group/copy" data-account="{{ $bankDetails['account_number'] ?? '' }}">
                                                     <i class="hgi-stroke hgi-copy-01 group-hover/copy:scale-110 transition-transform"></i>
                                                 </button>
                                             </div>
@@ -107,6 +107,17 @@
                                     display.classList.add('text-primary');
                                 }
                             }
+
+                            // Handle copy button
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const copyBtn = document.querySelector('.copy-account-btn');
+                                if (copyBtn) {
+                                    copyBtn.addEventListener('click', function() {
+                                        const accountNumber = this.getAttribute('data-account');
+                                        navigator.clipboard.writeText(accountNumber);
+                                    });
+                                }
+                            });
                         </script>
 
                         <div class="mt-12 pt-8 border-t border-soft-grey text-center">

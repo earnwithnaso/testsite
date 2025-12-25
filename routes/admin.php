@@ -21,6 +21,10 @@ Route::middleware(['auth', 'staff'])->prefix('admin')->name('admin.')->group(fun
     // Lesson Management
     Route::resource('courses.lessons', \App\Http\Controllers\Admin\LessonController::class)->shallow();
 
+    // Quiz Management
+    Route::resource('courses.quizzes', \App\Http\Controllers\Admin\QuizController::class)->shallow();
+    Route::resource('quizzes.questions', \App\Http\Controllers\Admin\QuizQuestionController::class)->shallow();
+
     // Order Management
     Route::get('orders', [\App\Http\Controllers\Admin\OrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}', [\App\Http\Controllers\Admin\OrderController::class, 'show'])->name('orders.show');
