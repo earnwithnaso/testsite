@@ -45,7 +45,7 @@
                             </div>
                         </td>
                         <td class="p-6">
-                            <span class="text-sm font-bold text-primary">₦{{ number_format($course->price, 2) }}</span>
+                            <span class="text-sm font-bold text-primary">₦{{ number_format((float)$course->price, 2) }}</span>
                         </td>
                         <td class="p-6">
                             @if($course->is_published)
@@ -57,6 +57,8 @@
                         <td class="p-6">
                             <div class="flex items-center gap-3">
                                 <a href="{{ route('admin.courses.lessons.index', $course) }}" class="text-sm font-bold text-primary hover:underline">Manage Lessons</a>
+                                <div class="w-px h-4 bg-soft-grey"></div>
+                                <a href="{{ route('admin.courses.quizzes.index', $course) }}" class="text-sm font-bold text-brand hover:underline">Manage Quizzes</a>
                                 <div class="w-px h-4 bg-soft-grey"></div>
                                 <a href="{{ route('admin.courses.edit', $course) }}" class="text-sm font-bold text-secondary hover:text-primary">Edit</a>
                                 <form action="{{ route('admin.courses.destroy', $course) }}" method="POST" onsubmit="return confirm('Are you sure?')">

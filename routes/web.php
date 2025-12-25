@@ -36,6 +36,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/quizzes/{quiz}', [\App\Http\Controllers\Student\QuizController::class, 'show'])->name('student.quizzes.show');
     Route::post('/quizzes/{quiz}/submit', [\App\Http\Controllers\Student\QuizController::class, 'submit'])->name('student.quizzes.submit');
 
+    // Certificates
+    Route::get('/certificates', [\App\Http\Controllers\Student\CertificateController::class, 'index'])->name('student.certificates.index');
+    Route::post('/courses/{course}/certificate/generate', [\App\Http\Controllers\Student\CertificateController::class, 'generate'])->name('student.certificates.generate');
+    Route::get('/certificates/{certificate}', [\App\Http\Controllers\Student\CertificateController::class, 'show'])->name('student.certificates.show');
+
 });
 
 

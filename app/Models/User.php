@@ -60,6 +60,11 @@ class User extends Authenticatable
         return $this->hasMany(ActivityLog::class);
     }
 
+    /**
+     * Get all lesson progress records for this user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function lessonProgress()
     {
         return $this->hasMany(LessonProgress::class);
@@ -72,6 +77,12 @@ class User extends Authenticatable
         });
     }
 
+    /**
+     * Check if the user is enrolled in a specific course.
+     *
+     * @param  \App\Models\Course  $course
+     * @return bool
+     */
     public function isEnrolledIn(Course $course): bool
     {
         return $this->orders()->where('payment_status', 'paid')
@@ -93,5 +104,15 @@ class User extends Authenticatable
     public function isStaff(): bool
     {
         return $this->isAdmin() || $this->isInstructor();
+    }
+
+    /**
+     * Get all certificates earned by this user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function certificates()
+    {
+        return $this->hasMany(Certificate::class);
     }
 }

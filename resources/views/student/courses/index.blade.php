@@ -73,8 +73,8 @@
                                     </span>
                                     <span class="text-sm font-black text-primary">{{ (int)$percent }}%</span>
                                 </div>
+                                @php $progressWidth = (int)$percent . '%'; @endphp
                                 <div class="w-full bg-soft-grey h-1.5 rounded-full overflow-hidden border border-soft-grey/30">
-                                    @php $progressWidth = (int)$percent . '%'; @endphp
                                     <div class="bg-brand h-full rounded-full transition-all duration-1000 shadow-glow" style="width: {{ $progressWidth }}"></div>
                                 </div>
                             </div>

@@ -109,8 +109,8 @@
                             <span>{{ (int)$completedCount }} / {{ (int)$totalLessons }} Modules</span>
                             <span class="text-white text-base">{{ (int)$percentage }}%</span>
                         </div>
+                        @php $progressWidth = (int)$percentage . '%'; @endphp
                         <div class="w-full bg-white/10 h-3 rounded-full overflow-hidden border border-white/10 backdrop-blur-sm">
-                            @php $progressWidth = (int)$percentage . '%'; @endphp
                             <div class="bg-brand h-full rounded-full transition-all duration-1000 shadow-glow" style="width: {{ $progressWidth }}"></div>
                         </div>
                     </div>
@@ -182,6 +182,40 @@
                         @endforeach
                     </div>
                 </div>
+
+                <!-- Quizzes Section -->
+                @php
+                    $courseQuizzes = $course->quizzes()->where('is_published', true)->with('lesson')->get();
+                @endphp
+                @if($courseQuizzes->count() > 0)
+                <div class="bg-white rounded-[40px] shadow-soft overflow-hidden border border-soft-grey">
+                    <div class="p-8 border-b border-soft-grey flex items-center justify-between bg-soft-grey/10">
+                        <h3 class="font-black text-xl text-primary tracking-tighter">Assessments</h3>
+                        <div class="w-10 h-10 bg-white rounded-xl shadow-soft flex items-center justify-center text-brand">
+                             <i class="hgi-stroke hgi-task-01"></i>
+                        </div>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        @foreach($courseQuizzes as $quiz)
+                            <a href="{{ route('student.quizzes.show', $quiz) }}" 
+                               class="flex items-center gap-4 p-5 bg-soft-grey/30 rounded-2xl hover:bg-primary hover:text-white transition-all group border border-transparent hover:border-primary/20">
+                                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-soft">
+                                    <i class="hgi-stroke hgi-clipboard-list text-xl text-primary group-hover:scale-110 transition-transform"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-black text-sm">{{ $quiz->title }}</h4>
+                                    @if($quiz->lesson)
+                                        <p class="text-[10px] font-bold text-secondary/60 group-hover:text-white/70 uppercase tracking-widest">{{ $quiz->lesson->title }}</p>
+                                    @else
+                                        <p class="text-[10px] font-bold text-secondary/60 group-hover:text-white/70 uppercase tracking-widest">Course Assessment</p>
+                                    @endif
+                                </div>
+                                <i class="hgi-stroke hgi-arrow-right-01 text-secondary group-hover:text-white"></i>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
 
                 <!-- Instructor Card mini -->
                 <div class="bg-white p-8 rounded-[40px] shadow-soft border border-soft-grey group relative overflow-hidden">
