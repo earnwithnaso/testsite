@@ -44,29 +44,6 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Initialize Stripe Checkout session.
-     */
-    public function stripeSession(Request $request, Course $course)
-    {
-        // Using Laravel Cashier (Stripe)
-        return $request->user()
-            ->checkout([$course->stripe_price_id => 1], [
-                'success_url' => route('checkout.success') . '?session_id={CHECKOUT_SESSION_ID}',
-                'cancel_url' => route('courses.show', $course->slug),
-            ]);
-    }
-
-    /**
-     * Initialize Paystack Payment (Manual implementation or using a package)
-     */
-    public function paystackInitialize(Request $request, Course $course)
-    {
-        // This is a placeholder for Paystack redirection logic
-        // In a real app, you'd call Paystack API here
-        return redirect()->away('https://checkout.paystack.com/placeholder');
-    }
-
-    /**
      * Process Bank Transfer submission.
      */
     public function processBankTransfer(Request $request, Course $course)
@@ -98,16 +75,5 @@ class CheckoutController extends Controller
         ]);
 
         return redirect()->route('dashboard')->with('success', 'Payment proof submitted successfully! Your course will be available once the admin approves your payment.');
-    }
-
-    /**
-     * Handle successful payment return.
-     */
-    public function success(Request $request)
-    {
-        // NOTE: In production, use Stripe Webhooks to fulfill the order.
-        // This is where you would mark the order as 'paid' and enroll the user.
-        
-        return redirect()->route('dashboard')->with('success', 'Your enrollment was successful! Welcome to the course.');
     }
 }
