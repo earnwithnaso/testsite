@@ -104,9 +104,8 @@
                                         <div class="text-[10px] font-black uppercase tracking-widest text-secondary/60">Completion</div>
                                         <div class="text-sm font-black text-primary">{{ (int)$percent }}%</div>
                                     </div>
-                                    @php $progressWidth = (int)$percent . '%'; @endphp
                                     <div class="w-full bg-soft-grey/50 rounded-full h-2 overflow-hidden border border-white">
-                                        <div class="bg-brand h-full rounded-full transition-all duration-1000 shadow-glow" style="width: {{ $progressWidth }};"></div>
+                                        <div class="bg-brand h-full rounded-full transition-all duration-1000 shadow-glow" @style(['width: ' . (int)$percent . '%'])></div>
                                     </div>
                                 </div>
                             </div>

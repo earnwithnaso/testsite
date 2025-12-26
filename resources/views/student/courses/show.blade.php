@@ -109,9 +109,8 @@
                             <span>{{ (int)$completedCount }} / {{ (int)$totalLessons }} Modules</span>
                             <span class="text-white text-base">{{ (int)$percentage }}%</span>
                         </div>
-                        @php $progressWidth = (int)$percentage . '%'; @endphp
                         <div class="w-full bg-white/10 h-3 rounded-full overflow-hidden border border-white/10 backdrop-blur-sm">
-                            <div class="bg-brand h-full rounded-full transition-all duration-1000 shadow-glow" style="width: {{ $progressWidth }}"></div>
+                            <div class="bg-brand h-full rounded-full transition-all duration-1000 shadow-glow" @style(['width: ' . (int)$percentage . '%'])></div>
                         </div>
                     </div>
                 </div>
